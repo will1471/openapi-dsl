@@ -1,0 +1,36 @@
+{
+  "name": "will/openapi-dsl",
+  "type": "project",
+  "require": {
+    "phplrt/phplrt": "^3.1",
+    "sspat/reserved-words": "^2.0",
+    "laminas/laminas-code": "^4.4",
+    "nikic/php-parser": "^4.13",
+    "whsv26/functional": "^4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Will1471\\OpenApiDsl\\": "./src"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5",
+    "squizlabs/php_codesniffer": "^3.6",
+    "slevomat/coding-standard": "dev-master",
+    "vimeo/psalm": "^4.10",
+    "infection/infection": "^0.24.0",
+    "roave/infection-static-analysis-plugin": "^1.9",
+    "phpmd/phpmd": "^2.10",
+    "sebastian/phpcpd": "^6.0",
+    "matthiasnoback/php-parser-instantiation-printer": "^0.2.0"
+  },
+  "scripts": {
+    "phpcs": "php8.0 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcs -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
+    "phpcbf": "php8.0 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcbf -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
+    "psalm": "php8.0 ./vendor/bin/psalm --no-cache",
+    "phpunit": "php8.0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.mode=coverage ./vendor/bin/phpunit ./tests",
+    "infection": "php8.0 -d zend.assertions=1 -d assert.exception=1 ./vendor/bin/infection",
+    "phpcpd": "php8.0 ./vendor/bin/phpcpd ./src --fuzzy --min-lines 1 --min-tokens 20 --log-pmd phpcpd.xml",
+    "test": ["@phpcbf", "@phpunit", "@psalm", "@phpcs", "@infection", "cat infection.log"]
+  }
+}

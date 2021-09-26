@@ -1,0 +1,16 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "./src"
+        ]
+    },
+    "mutators": {
+        "@default": true,
+        "InstanceOf_": false
+    },
+    "logs": {
+        "text": "./infection.log"
+    },
+    "initialTestsPhpOptions": "-d xdebug.mode=coverage -d zend.assertions=1 -d assert.exception=1"
+}

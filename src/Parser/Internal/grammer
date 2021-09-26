@@ -1,0 +1,29 @@
+%skip WS \s+
+
+%token T_ENUM enum
+%token T_METHOD (GET|POST|PUT|PATCH|DELETE)
+%token T_ID  [a-zA-Z][a-zA-Z_0-9]+
+%token colon   :
+%token dash   -
+%token q \?
+%token list \[\]
+%token T_SLASH /
+%token T_EQ =
+%token T_LEFT_BRACE {
+%token T_RIGHT_BRACE }
+
+entry: (obj()|enum()|endpoint())*
+
+#obj: <T_ID> fields()
+fields: field()*
+#field: ::dash:: fieldName() ::colon:: fieldType()
+#fieldName: <T_ID> <q>?
+#fieldType: <q>? <T_ID> <list>?
+
+#enum: ::T_ENUM:: <T_ID> members()
+members: member()+
+#member: ::dash:: <T_ID>
+
+#endpoint: <T_METHOD> path() query()?
+#path: (<T_SLASH> (<T_ID>|<T_LEFT_BRACE> <T_ID> <T_RIGHT_BRACE>))*
+#query: ::q:: (<T_ID> <list>? ::T_EQ:: ::T_LEFT_BRACE:: <T_ID> ::T_RIGHT_BRACE::)+
