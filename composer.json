@@ -31,6 +31,6 @@
     "phpunit": "php8.0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.mode=coverage ./vendor/bin/phpunit ./tests",
     "infection": "php8.0 -d zend.assertions=1 -d assert.exception=1 ./vendor/bin/infection",
     "phpcpd": "php8.0 ./vendor/bin/phpcpd ./src --fuzzy --min-lines 1 --min-tokens 20 --log-pmd phpcpd.xml",
-    "test": ["@phpcbf", "@phpunit", "@psalm", "@phpcs", "@infection", "cat infection.log"]
+    "test": ["mkdir -p output", "@phpcbf", "@phpunit", "@psalm", "@phpcs"]
   }
 }
