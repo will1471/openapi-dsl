@@ -262,17 +262,27 @@ DATA
         $this->assertCount(0, $r->objs());
     }
 
-    /*
-        public function testParseQueryParams(): void
-        {
-            $this->markTestIncomplete();
-            throw new \Exception('missing test and impl');
-            $data = <<<DATA
-    GET /search?q={q}
-    DATA;
-            $data = <<<DATA
-    GET /search?ids[]={ids}
-    DATA;
-        }
-        }*/
+    public function testParseQueryParams(): void
+    {
+        $r = $this->parse(
+            <<<DATA
+GET /search?q={q}
+DATA
+        );
+        $this->assertCount(1, $r->getEndpoints());
+
+        $r = $this->parse(
+            <<<DATA
+GET /search?q={q}&order={order}
+DATA
+        );
+        $this->assertCount(1, $r->getEndpoints());
+
+        $r = $this->parse(
+            <<<DATA
+GET /foo?ids[]={ids}
+DATA
+        );
+        $this->assertCount(1, $r->getEndpoints());
+    }
 }
