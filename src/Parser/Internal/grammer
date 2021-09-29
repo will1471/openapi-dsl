@@ -1,4 +1,5 @@
 %skip WS \s+
+%skip COMMENT #[^\n]+
 
 %token T_ENUM enum
 %token T_METHOD (GET|POST|PUT|PATCH|DELETE)

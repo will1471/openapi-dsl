@@ -242,6 +242,26 @@ DATA
         $this->assertSame('OutType', $endpoint->getOutputType());
     }
 
+    public function testCanIgnoreComments(): void
+    {
+        $r = $this->parse(
+            <<<DATA
+# comment
+Obj
+- id: int
+DATA
+        );
+        $this->assertCount(1, $r->objs());
+        $r = $this->parse(
+            <<<DATA
+# comment
+#Obj
+#- id: int
+DATA
+        );
+        $this->assertCount(0, $r->objs());
+    }
+
     /*
         public function testParseQueryParams(): void
         {
