@@ -199,30 +199,60 @@ DATA;
         $endpoint = $r->getEndpoints()[0];
         $this->assertSame('GET', $endpoint->getMethod());
         $this->assertSame('/foo/{id}/bar', $endpoint->getPath());
-    }
-/*
-    public function testParseQueryParams(): void
-    {
-        $this->markTestIncomplete();
-        throw new \Exception('missing test and impl');
-        $data = <<<DATA
-GET /search?q={q}
-DATA;
-        $data = <<<DATA
-GET /search?ids[]={ids}
-DATA;
+        $this->assertNull($endpoint->getInputType());
+        $this->assertNull($endpoint->getOutputType());
     }
 
-    public function testParsePathPlaceholder(): void
+    public function testParseEndpointInput(): void
     {
-        $this->markTestIncomplete();
-        throw new \Exception('missing grammer, test and impl');
-        $data = <<<DATA
-GET /foo/{id}
-DATA;
+        $r = $this->parse(
+            <<<DATA
+GET /foo <= SomeObj
+DATA
+        );
+        $this->assertCount(1, $r->getEndpoints());
+        $endpoint = $r->getEndpoints()[0];
+        $this->assertSame('SomeObj', $endpoint->getInputType());
+        $this->assertNull($endpoint->getOutputType());
+    }
 
-        $data = <<<DATA
-GET /foo/{fooId}/bar/{barId}
-DATA;
-    }*/
+    public function testParseEndpointOutput(): void
+    {
+        $r = $this->parse(
+            <<<DATA
+GET /foo => SomeObj
+DATA
+        );
+        $this->assertCount(1, $r->getEndpoints());
+        $endpoint = $r->getEndpoints()[0];
+        $this->assertNull($endpoint->getInputType());
+        $this->assertSame('SomeObj', $endpoint->getOutputType());
+    }
+
+    public function testParseEndpointInputAndOutput(): void
+    {
+        $r = $this->parse(
+            <<<DATA
+GET /foo <= InType => OutType
+DATA
+        );
+        $this->assertCount(1, $r->getEndpoints());
+        $endpoint = $r->getEndpoints()[0];
+        $this->assertSame('InType', $endpoint->getInputType());
+        $this->assertSame('OutType', $endpoint->getOutputType());
+    }
+
+    /*
+        public function testParseQueryParams(): void
+        {
+            $this->markTestIncomplete();
+            throw new \Exception('missing test and impl');
+            $data = <<<DATA
+    GET /search?q={q}
+    DATA;
+            $data = <<<DATA
+    GET /search?ids[]={ids}
+    DATA;
+        }
+        }*/
 }

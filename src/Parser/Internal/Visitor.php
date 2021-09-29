@@ -134,6 +134,20 @@ final class Visitor extends \Phplrt\Visitor\Visitor
         $this->endpointBuilder->setPath($buffer);
     }
 
+    private function enterEndpointInput(SampleNode $node): void
+    {
+        assert($this->endpointBuilder instanceof EndpointBuilder);
+        assert($node->children[0] instanceof TokenInterface);
+        $this->endpointBuilder->setInputType($node->children[0]->getValue());
+    }
+
+    private function enterEndpointOutput(SampleNode $node): void
+    {
+        assert($this->endpointBuilder instanceof EndpointBuilder);
+        assert($node->children[0] instanceof TokenInterface);
+        $this->endpointBuilder->setOutputType($node->children[0]->getValue());
+    }
+
     private function exitEndpoint(SampleNode $_): void
     {
         assert($this->endpointBuilder != null);

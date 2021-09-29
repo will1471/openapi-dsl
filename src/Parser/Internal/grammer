@@ -8,9 +8,12 @@
 %token q \?
 %token list \[\]
 %token T_SLASH /
+%token T_IN <=
+%token T_OUT =>
 %token T_EQ =
 %token T_LEFT_BRACE {
 %token T_RIGHT_BRACE }
+
 
 entry: (obj()|enum()|endpoint())*
 
@@ -24,6 +27,8 @@ fields: field()*
 members: member()+
 #member: ::dash:: <T_ID>
 
-#endpoint: <T_METHOD> path() query()?
+#endpoint: <T_METHOD> path() query()? endpointInput()? endpointOutput()?
 #path: (<T_SLASH> (<T_ID>|<T_LEFT_BRACE> <T_ID> <T_RIGHT_BRACE>))*
 #query: ::q:: (<T_ID> <list>? ::T_EQ:: ::T_LEFT_BRACE:: <T_ID> ::T_RIGHT_BRACE::)+
+#endpointInput: ::T_IN:: <T_ID>
+#endpointOutput: ::T_OUT:: <T_ID>
