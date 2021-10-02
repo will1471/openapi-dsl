@@ -32,7 +32,7 @@
     "phpunit": "php8.0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.mode=coverage ./vendor/bin/phpunit ./tests",
     "infection": "php8.0 -d zend.assertions=1 -d assert.exception=1 ./vendor/bin/infection",
     "phpcpd": "php8.0 ./vendor/bin/phpcpd ./src --fuzzy --min-lines 1 --min-tokens 20 --log-pmd phpcpd.xml",
-    "validate-openapi": "php8.0 ./vendor/bin/php-openapi validate ./output/openapi.json",
+    "validate-openapi": "find ./output -name 'openapi*' | xargs -I {} php8.0 ./vendor/bin/php-openapi validate {}",
     "test": ["mkdir -p output", "@phpcbf", "@phpunit", "@psalm", "@validate-openapi", "@phpcs"]
   }
 }
