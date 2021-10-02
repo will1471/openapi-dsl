@@ -18,7 +18,7 @@ final class JsonSchemaGenerator
      */
     private array $definitions = [];
 
-    public function __construct(private Obj $obj, private ParseResult $parseResult)
+    public function __construct(private ParseResult $parseResult, private string $refPrefix = '#/definitions/')
     {
     }
 
@@ -34,9 +34,9 @@ final class JsonSchemaGenerator
      *   >
      * }
      */
-    public function build(): array
+    public function build(Obj $obj): array
     {
-        $doc = $this->buildObj($this->obj);
+        $doc = $this->buildObj($obj);
         while (($def = $this->defToBuild()) !== null) {
             $doc['definitions'][$def] = $this->parseResult->hasEnum($def)
                 ? $this->buildEnum($this->parseResult->getEnum($def))
@@ -45,7 +45,7 @@ final class JsonSchemaGenerator
         return $doc;
     }
 
-    private function defToBuild(): ?string
+    public function defToBuild(): ?string
     {
         foreach ($this->definitions as $name => $done) {
             if ($done === false) {
@@ -89,14 +89,14 @@ final class JsonSchemaGenerator
     /**
      * @return array<string,mixed>
      */
-    private function buildProp(Prop $prop): array
+    public function buildProp(Prop $prop): array
     {
-        $type = ['type' => $prop->getType()];
+        $type = ['type' => $prop->getType() == 'int' ? 'integer' : $prop->getType()];
         if ($this->parseResult->hasObj($prop->getType()) || $this->parseResult->hasEnum($prop->getType())) {
             if (!isset($this->definitions[$prop->getType()])) {
                 $this->definitions[$prop->getType()] = false;
             }
-            $type = ['$ref' => '#/definitions/' . $prop->getType()];
+            $type = ['$ref' => $this->refPrefix . $prop->getType()];
         }
         if ($prop->isList()) {
             $type = ['type' => 'array', 'items' => $type];

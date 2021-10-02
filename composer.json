@@ -6,7 +6,8 @@
     "sspat/reserved-words": "^2.0",
     "laminas/laminas-code": "^4.4",
     "nikic/php-parser": "^4.13",
-    "whsv26/functional": "^4.1"
+    "whsv26/functional": "^4.1",
+    "cebe/php-openapi": "^1.5"
   },
   "autoload": {
     "psr-4": {
@@ -31,6 +32,7 @@
     "phpunit": "php8.0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.mode=coverage ./vendor/bin/phpunit ./tests",
     "infection": "php8.0 -d zend.assertions=1 -d assert.exception=1 ./vendor/bin/infection",
     "phpcpd": "php8.0 ./vendor/bin/phpcpd ./src --fuzzy --min-lines 1 --min-tokens 20 --log-pmd phpcpd.xml",
-    "test": ["mkdir -p output", "@phpcbf", "@phpunit", "@psalm", "@phpcs"]
+    "validate-openapi": "php8.0 ./vendor/bin/php-openapi validate ./output/openapi.json",
+    "test": ["mkdir -p output", "@phpcbf", "@phpunit", "@psalm", "@validate-openapi", "@phpcs"]
   }
 }

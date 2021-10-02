@@ -137,7 +137,7 @@ DATA;
             file_put_contents(
                 __DIR__ . '/../output/' . $name . '.json',
                 json_encode(
-                    (new JsonSchemaGenerator($obj, $parseResult))->build(),
+                    (new JsonSchemaGenerator($parseResult))->build($obj),
                     JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
                 )
             );
@@ -152,6 +152,9 @@ DATA;
         $this->assertTrue(true);
     }
 
+    /**
+     * @depends testSimpleModel
+     */
     public function testSomeObj(): void
     {
         $expected = file_get_contents(__DIR__ . '/expectedSomeObj.php');
@@ -162,6 +165,9 @@ DATA;
         $this->assertSame(1, $obj->getId());
     }
 
+    /**
+     * @depends testSimpleModel
+     */
     public function testSomeEnum(): void
     {
         $expected = file_get_contents(__DIR__ . '/expectedSomeEnum.php');

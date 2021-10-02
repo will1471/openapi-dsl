@@ -21,7 +21,7 @@ class JsonSchemaTest extends TestCase
         $obj = new Obj('Foo');
         $obj->addProp(new Prop('id', 'integer', true));
         $obj->addProp(new Prop('name', 'string', false));
-        $jsonSchema = (new JsonSchemaGenerator($obj, new ParseResult([], [], [])))->buildObj($obj);
+        $jsonSchema = (new JsonSchemaGenerator(new ParseResult([], [], [])))->buildObj($obj);
         $expected = [
             'type' => 'object',
             'required' => ['name'],
@@ -50,7 +50,7 @@ class JsonSchemaTest extends TestCase
                     ]
                 ]
             ],
-            (new JsonSchemaGenerator($obj, new ParseResult([], [], [])))->buildObj($obj)
+            (new JsonSchemaGenerator(new ParseResult([], [], [])))->buildObj($obj)
         );
     }
 
@@ -71,7 +71,7 @@ class JsonSchemaTest extends TestCase
                     ]
                 ]
             ],
-            (new JsonSchemaGenerator($obj, new ParseResult([], [], [])))->buildObj($obj)
+            (new JsonSchemaGenerator(new ParseResult([], [], [])))->buildObj($obj)
         );
     }
 
@@ -99,7 +99,7 @@ class JsonSchemaTest extends TestCase
                     ]
                 ]
             ],
-            (new JsonSchemaGenerator($obj, new ParseResult([], [], [])))->buildObj($obj)
+            (new JsonSchemaGenerator(new ParseResult([], [], [])))->buildObj($obj)
         );
     }
 
@@ -130,7 +130,7 @@ class JsonSchemaTest extends TestCase
                     ]
                 ]
             ],
-            (new JsonSchemaGenerator($parent, new ParseResult([$child], [], [])))->build()
+            (new JsonSchemaGenerator(new ParseResult([$child], [], [])))->build($parent)
         );
     }
 
@@ -168,7 +168,7 @@ class JsonSchemaTest extends TestCase
                     ]
                 ]
             ],
-            (new JsonSchemaGenerator($a, new ParseResult([$b, $c], [], [])))->build()
+            (new JsonSchemaGenerator(new ParseResult([$b, $c], [], [])))->build($a)
         );
     }
 
@@ -185,7 +185,7 @@ class JsonSchemaTest extends TestCase
         );
         $this->assertSame(
             ['type' => 'string', 'enum' => ['ACTIVE', 'DISABLED']],
-            (new JsonSchemaGenerator(new Obj('obj'), new ParseResult([], [], [])))->buildEnum($enum)
+            (new JsonSchemaGenerator(new ParseResult([], [], [])))->buildEnum($enum)
         );
     }
 
@@ -210,7 +210,7 @@ class JsonSchemaTest extends TestCase
                 'type' => 'object',
                 'required' => ['id', 'status'],
                 'properties' => [
-                    'id' => ['type' => 'int'],
+                    'id' => ['type' => 'integer'],
                     'status' => ['$ref' => '#/definitions/Status']
                 ],
                 'definitions' => [
@@ -220,7 +220,7 @@ class JsonSchemaTest extends TestCase
                     ]
                 ]
             ],
-            (new JsonSchemaGenerator($doc, new ParseResult([], [$enum], [])))->build()
+            (new JsonSchemaGenerator(new ParseResult([], [$enum], [])))->build($doc)
         );
     }
 }
