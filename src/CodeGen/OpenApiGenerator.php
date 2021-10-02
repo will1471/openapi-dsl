@@ -9,6 +9,7 @@ use cebe\openapi\spec\OpenApi;
 use cebe\openapi\spec\Parameter;
 use cebe\openapi\spec\PathItem;
 use cebe\openapi\spec\Paths;
+use cebe\openapi\spec\RequestBody;
 use cebe\openapi\spec\Schema;
 use Will1471\OpenApiDsl\DSL\Endpoint;
 use Will1471\OpenApiDsl\DSL\Prop;
@@ -39,33 +40,40 @@ class OpenApiGenerator
                 ]
             ]
         );
+
         foreach ($this->parseResult->getEndpoints() as $endpoint) {
             assert($openapi->paths instanceof Paths);
 
             $pathItem = $this->getOrCreatePathItem($openapi, $endpoint);
 
+            $content = [];
             if ($endpoint->getOutputType() !== null) {
-                $pathItem->{strtolower($endpoint->getMethod())} = new \cebe\openapi\spec\Operation(
+                $schema = $this->schemaGenerator->buildProp(new Prop('_', $endpoint->getOutputType()));
+                $content = ['content' => ['application/json' => ['schema' => $schema]]];
+            }
+
+            $requestBody = null;
+            if ($endpoint->getInputType() !== null) {
+                $schema = $this->schemaGenerator->buildProp(new Prop('_', $endpoint->getInputType()));
+                $requestBody = new RequestBody(
                     [
-                        'responses' => [
-                            '200' => [
-                                'description' => 'Success',
-                                'content' => [
-                                    'application/json' => [
-                                        'schema' => $this->schemaGenerator->buildProp(
-                                            new Prop('_', $endpoint->getOutputType())
-                                        )
-                                    ]
-                                ]
+                        'content' => [
+                            'application/json' => [
+                                'schema' => $schema
                             ]
                         ]
                     ]
                 );
-            } else {
-                $pathItem->{strtolower($endpoint->getMethod())} = new \cebe\openapi\spec\Operation(
-                    ['responses' => ['200' => ['description' => 'Success']]]
-                );
             }
+
+            $pathItem->{strtolower($endpoint->getMethod())} = new \cebe\openapi\spec\Operation(
+                array_merge(
+                    [
+                        'responses' => ['200' => array_merge(['description' => 'Success'], $content)]
+                    ],
+                    !empty($requestBody) ? ['requestBody' => $requestBody] : []
+                )
+            );
         }
 
         while (($def = $this->schemaGenerator->defToBuild()) != null) {

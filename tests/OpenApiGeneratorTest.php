@@ -186,4 +186,135 @@ JSON,
             $json
         );
     }
+
+    public function testApiWithInputType(): void
+    {
+        $data = <<<DATA
+enum MediaType
+- IMAGE
+- VIDEO
+
+Media
+- type: MediaType
+- url: string
+
+CreateMessageRequest
+- account_id: int
+- text: string
+- media: Media[]
+
+ID
+- id: int
+
+POST /message <= CreateMessageRequest => ID
+DATA;
+        $result = (new Parser())->parse($data);
+
+        $openApi = (new OpenApiGenerator('Title', '0.0.1', $result))->generate();
+        file_put_contents(
+            __DIR__ . '/../output/openapi-create-message.json',
+            $json = json_encode($data = $openApi->getSerializableData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        );
+        $this->assertSame('Title', $data->info->title);
+        $this->assertSame('0.0.1', $data->info->version);
+
+        $this->assertJsonStringEqualsJsonString(
+            <<<JSON
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Title",
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/message": {
+            "post": {
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "\$ref": "#/components/schemas/CreateMessageRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "\$ref": "#/components/schemas/ID"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ID": {
+                "required": [
+                    "id"
+                ],
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "CreateMessageRequest": {
+                "required": [
+                    "account_id",
+                    "text",
+                    "media"
+                ],
+                "type": "object",
+                "properties": {
+                    "account_id": {
+                        "type": "integer"
+                    },
+                    "text": {
+                        "type": "string"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "\$ref": "#/components/schemas/Media"
+                        }
+                    }
+                }
+            },
+            "Media": {
+                "required": [
+                    "type",
+                    "url"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "\$ref": "#/components/schemas/MediaType"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "MediaType": {
+                "enum": [
+                    "IMAGE",
+                    "VIDEO"
+                ],
+                "type": "string"
+            }
+        }
+    }
+}
+JSON,
+            $json
+        );
+    }
 }
