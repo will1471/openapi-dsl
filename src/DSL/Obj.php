@@ -20,11 +20,6 @@ final class Obj
         ReservedWord::check($this->name);
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
     /**
      * @return HashMap<string,Prop>
      */
@@ -35,7 +30,7 @@ final class Obj
 
     public function addProp(Prop $prop): void
     {
-        $this->props[$prop->getName()] = $prop;
+        $this->props[$prop->name] = $prop;
     }
 
     public function hasProp(string $name): bool
@@ -53,7 +48,7 @@ final class Obj
      */
     public function optionalProp(): array
     {
-        return $this->props()->values()->filter(fn(Prop $p): bool => $p->isFieldOptional())->toArray();
+        return $this->props()->values()->filter(fn(Prop $p): bool => $p->isOptional)->toArray();
     }
 
     /**
@@ -61,6 +56,6 @@ final class Obj
      */
     public function requiredProp()
     {
-        return $this->props()->values()->filter(fn(Prop $p): bool => !$p->isFieldOptional())->toArray();
+        return $this->props()->values()->filter(fn(Prop $p): bool => !$p->isOptional)->toArray();
     }
 }

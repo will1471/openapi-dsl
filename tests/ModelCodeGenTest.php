@@ -130,7 +130,7 @@ DATA;
         $parseResult = $this->parse($data);
 
         foreach ($parseResult->objs()->values() as $obj) {
-            $name = $obj->getName();
+            $name = $obj->name;
             $src = (new ObjGenerator($obj, $parseResult, 'Will1471\\CodeGen'))->generate();
             file_put_contents(__DIR__ . '/../output/' . $name . '.php', '<?php' . "\n\n" . $src);
 
@@ -144,7 +144,7 @@ DATA;
         }
 
         foreach ($parseResult->enums()->values() as $enum) {
-            $name = $enum->getName();
+            $name = $enum->name;
             $src = (new EnumGenerator($enum, 'Will1471\\CodeGen'))->generate();
             file_put_contents(__DIR__ . '/../output/' . $name . '.php', '<?php' . "\n\n" . $src);
         }

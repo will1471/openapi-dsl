@@ -12,7 +12,7 @@ use PhpParser\Node\Expr\Variable;
  */
 final class ForeachHelper
 {
-    public function __construct(private Expr $expr)
+    public function __construct(private readonly Expr $expr)
     {
     }
 

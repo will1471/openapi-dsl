@@ -89,7 +89,7 @@ final class Visitor extends \Phplrt\Visitor\Visitor
         }
     }
 
-    private function exitField(SampleNode $_): void
+    private function exitField(): void
     {
         assert($this->propBuilder != null);
         assert($this->currentObj != null);
@@ -109,7 +109,7 @@ final class Visitor extends \Phplrt\Visitor\Visitor
         $this->enumBuilder->addMember(new EnumMember($node->children[0]->getValue()));
     }
 
-    private function exitEnum(SampleNode $_): void
+    private function exitEnum(): void
     {
         assert($this->enumBuilder != null);
         $this->enums[] = $this->enumBuilder->build();
@@ -148,7 +148,7 @@ final class Visitor extends \Phplrt\Visitor\Visitor
         $this->endpointBuilder->setOutputType($node->children[0]->getValue());
     }
 
-    private function exitEndpoint(SampleNode $_): void
+    private function exitEndpoint(): void
     {
         assert($this->endpointBuilder != null);
         $this->endpoints[] = $this->endpointBuilder->build();

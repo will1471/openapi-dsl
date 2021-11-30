@@ -30,7 +30,7 @@ DATA;
         $obj = $result->getObj('Foo');
         $this->assertTrue($obj->hasProp('id'));
         $this->assertFalse($obj->hasProp('qwerty'));
-        $this->assertSame('string', $obj->getProp('id')->getType());
+        $this->assertSame('string', $obj->getProp('id')->type);
     }
 
     public function testTwoSimpleObjects(): void
@@ -49,8 +49,8 @@ DATA;
         $foo = $result->getObj('Foo');
         $bar = $result->getObj('Bar');
 
-        $this->assertSame('string', $foo->getProp('id')->getType());
-        $this->assertSame('int', $bar->getProp('id')->getType());
+        $this->assertSame('string', $foo->getProp('id')->type);
+        $this->assertSame('int', $bar->getProp('id')->type);
     }
 
     public function testParseOptionalField(): void
@@ -65,13 +65,13 @@ DATA;
         $id = $foo->getProp('id');
         $name = $foo->getProp('name');
 
-        $this->assertSame('id', $id->getName());
-        $this->assertSame('string', $id->getType());
-        $this->assertSame(true, $id->isFieldOptional());
+        $this->assertSame('id', $id->name);
+        $this->assertSame('string', $id->type);
+        $this->assertSame(true, $id->isOptional);
 
-        $this->assertSame('name', $name->getName());
-        $this->assertSame('string', $name->getType());
-        $this->assertSame(false, $name->isFieldOptional());
+        $this->assertSame('name', $name->name);
+        $this->assertSame('string', $name->type);
+        $this->assertSame(false, $name->isOptional);
     }
 
     public function testParseListType(): void
@@ -86,10 +86,10 @@ DATA;
         $single = $foo->getProp('single');
         $multi = $foo->getProp('multi');
 
-        $this->assertSame('string', $single->getType());
-        $this->assertSame(false, $single->isList());
-        $this->assertSame('string', $multi->getType());
-        $this->assertSame(true, $multi->isList());
+        $this->assertSame('string', $single->type);
+        $this->assertSame(false, $single->isList);
+        $this->assertSame('string', $multi->type);
+        $this->assertSame(true, $multi->isList);
     }
 
     public function testParseOptionalType(): void
@@ -100,10 +100,10 @@ Foo
 - req_type: string
 DATA;
         $r = $this->parse($data);
-        $this->assertSame('string', $r->getObj('Foo')->getProp('opt_type')->getType());
-        $this->assertSame('string', $r->getObj('Foo')->getProp('req_type')->getType());
-        $this->assertSame(true, $r->getObj('Foo')->getProp('opt_type')->isNullable());
-        $this->assertSame(false, $r->getObj('Foo')->getProp('req_type')->isNullable());
+        $this->assertSame('string', $r->getObj('Foo')->getProp('opt_type')->type);
+        $this->assertSame('string', $r->getObj('Foo')->getProp('req_type')->type);
+        $this->assertSame(true, $r->getObj('Foo')->getProp('opt_type')->isNullable);
+        $this->assertSame(false, $r->getObj('Foo')->getProp('req_type')->isNullable);
     }
 
     public function testReservedWordForObjName(): void
@@ -179,8 +179,8 @@ DATA;
         $r = $this->parse($data);
         $this->assertCount(1, $r->getEndpoints());
         $endpoint = $r->getEndpoints()[0];
-        $this->assertSame('GET', $endpoint->getMethod());
-        $this->assertSame('/foo', $endpoint->getPath());
+        $this->assertSame('GET', $endpoint->method);
+        $this->assertSame('/foo', $endpoint->path);
 
         $data = <<<DATA
 DELETE /bar/baz?id={foo}
@@ -188,8 +188,8 @@ DATA;
         $r = $this->parse($data);
         $this->assertCount(1, $r->getEndpoints());
         $endpoint = $r->getEndpoints()[0];
-        $this->assertSame('DELETE', $endpoint->getMethod());
-        $this->assertSame('/bar/baz', $endpoint->getPath());
+        $this->assertSame('DELETE', $endpoint->method);
+        $this->assertSame('/bar/baz', $endpoint->path);
 
         $data = <<<DATA
 GET /foo/{id}/bar
@@ -197,10 +197,10 @@ DATA;
         $r = $this->parse($data);
         $this->assertCount(1, $r->getEndpoints());
         $endpoint = $r->getEndpoints()[0];
-        $this->assertSame('GET', $endpoint->getMethod());
-        $this->assertSame('/foo/{id}/bar', $endpoint->getPath());
-        $this->assertNull($endpoint->getInputType());
-        $this->assertNull($endpoint->getOutputType());
+        $this->assertSame('GET', $endpoint->method);
+        $this->assertSame('/foo/{id}/bar', $endpoint->path);
+        $this->assertNull($endpoint->inputType);
+        $this->assertNull($endpoint->outputType);
     }
 
     public function testParseEndpointInput(): void
@@ -212,8 +212,8 @@ DATA
         );
         $this->assertCount(1, $r->getEndpoints());
         $endpoint = $r->getEndpoints()[0];
-        $this->assertSame('SomeObj', $endpoint->getInputType());
-        $this->assertNull($endpoint->getOutputType());
+        $this->assertSame('SomeObj', $endpoint->inputType);
+        $this->assertNull($endpoint->outputType);
     }
 
     public function testParseEndpointOutput(): void
@@ -225,8 +225,8 @@ DATA
         );
         $this->assertCount(1, $r->getEndpoints());
         $endpoint = $r->getEndpoints()[0];
-        $this->assertNull($endpoint->getInputType());
-        $this->assertSame('SomeObj', $endpoint->getOutputType());
+        $this->assertNull($endpoint->inputType);
+        $this->assertSame('SomeObj', $endpoint->outputType);
     }
 
     public function testParseEndpointInputAndOutput(): void
@@ -238,8 +238,8 @@ DATA
         );
         $this->assertCount(1, $r->getEndpoints());
         $endpoint = $r->getEndpoints()[0];
-        $this->assertSame('InType', $endpoint->getInputType());
-        $this->assertSame('OutType', $endpoint->getOutputType());
+        $this->assertSame('InType', $endpoint->inputType);
+        $this->assertSame('OutType', $endpoint->outputType);
     }
 
     public function testCanIgnoreComments(): void

@@ -1,10 +1,13 @@
 {
   "name": "will/openapi-dsl",
   "type": "project",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "require": {
+    "php": "8.1.*",
     "phplrt/phplrt": "^3.1",
     "sspat/reserved-words": "^2.0",
-    "laminas/laminas-code": "^4.4",
+    "laminas/laminas-code": "^4.5",
     "nikic/php-parser": "^4.13",
     "whsv26/functional": "^4.1",
     "cebe/php-openapi": "^1.5"
@@ -15,24 +18,24 @@
     }
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "squizlabs/php_codesniffer": "^3.6",
+    "phpunit/phpunit": "*",
+    "squizlabs/php_codesniffer": "*",
     "slevomat/coding-standard": "dev-master",
-    "vimeo/psalm": "^4.10",
-    "infection/infection": "^0.24.0",
-    "roave/infection-static-analysis-plugin": "^1.9",
-    "phpmd/phpmd": "^2.10",
-    "sebastian/phpcpd": "^6.0",
-    "matthiasnoback/php-parser-instantiation-printer": "^0.2.0"
+    "vimeo/psalm": "*",
+    "infection/infection": "*",
+    "roave/infection-static-analysis-plugin": "*",
+    "phpmd/phpmd": "*",
+    "sebastian/phpcpd": "*",
+    "matthiasnoback/php-parser-instantiation-printer": "*"
   },
   "scripts": {
-    "phpcs": "php8.0 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcs -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
-    "phpcbf": "php8.0 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcbf -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
-    "psalm": "php8.0 ./vendor/bin/psalm --no-cache",
-    "phpunit": "php8.0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.mode=coverage ./vendor/bin/phpunit ./tests",
-    "infection": "php8.0 -d zend.assertions=1 -d assert.exception=1 ./vendor/bin/infection",
-    "phpcpd": "php8.0 ./vendor/bin/phpcpd ./src --fuzzy --min-lines 1 --min-tokens 20 --log-pmd phpcpd.xml",
-    "validate-openapi": "find ./output -name 'openapi*' | xargs -I {} php8.0 ./vendor/bin/php-openapi validate {}",
+    "phpcs": "php8.1 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcs -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
+    "phpcbf": "php8.1 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcbf -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
+    "psalm": "php8.1 ./vendor/bin/psalm --no-cache",
+    "phpunit": "php8.1 -d zend.assertions=1 -d assert.exception=1 -d xdebug.mode=coverage ./vendor/bin/phpunit ./tests",
+    "infection": "php8.1 -d zend.assertions=1 -d assert.exception=1 ./vendor/bin/infection",
+    "phpcpd": "php8.1 ./vendor/bin/phpcpd ./src --fuzzy --min-lines 1 --min-tokens 20 --log-pmd phpcpd.xml",
+    "validate-openapi": "find ./output -name 'openapi*' | xargs -I {} php8.1 ./vendor/bin/php-openapi validate {}",
     "test": ["mkdir -p output", "@phpcbf", "@phpunit", "@psalm", "@validate-openapi", "@phpcs"]
   }
 }

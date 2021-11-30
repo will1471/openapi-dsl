@@ -17,7 +17,7 @@ final class ForeachHelperWithAs
 {
     private bool $withMixedDocBloc = false;
 
-    public function __construct(private Expr $expr, private Variable $as)
+    public function __construct(private readonly Expr $expr, private readonly Variable $as)
     {
     }
 

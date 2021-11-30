@@ -20,8 +20,11 @@ class OpenApiGenerator
 
     private JsonSchemaGenerator $schemaGenerator;
 
-    public function __construct(private string $title, private string $version, private ParseResult $parseResult)
-    {
+    public function __construct(
+        private readonly string $title,
+        private readonly string $version,
+        private readonly ParseResult $parseResult
+    ) {
         $this->schemaGenerator = new JsonSchemaGenerator($this->parseResult, '#/components/schemas/');
     }
 
@@ -47,14 +50,14 @@ class OpenApiGenerator
             $pathItem = $this->getOrCreatePathItem($openapi, $endpoint);
 
             $content = [];
-            if ($endpoint->getOutputType() !== null) {
-                $schema = $this->schemaGenerator->buildProp(new Prop('_', $endpoint->getOutputType()));
+            if ($endpoint->outputType !== null) {
+                $schema = $this->schemaGenerator->buildProp(new Prop('_', $endpoint->outputType));
                 $content = ['content' => ['application/json' => ['schema' => $schema]]];
             }
 
             $requestBody = null;
-            if ($endpoint->getInputType() !== null) {
-                $schema = $this->schemaGenerator->buildProp(new Prop('_', $endpoint->getInputType()));
+            if ($endpoint->inputType !== null) {
+                $schema = $this->schemaGenerator->buildProp(new Prop('_', $endpoint->inputType));
                 $requestBody = new RequestBody(
                     [
                         'content' => [
@@ -66,7 +69,7 @@ class OpenApiGenerator
                 );
             }
 
-            $pathItem->{strtolower($endpoint->getMethod())} = new \cebe\openapi\spec\Operation(
+            $pathItem->{strtolower($endpoint->method)} = new \cebe\openapi\spec\Operation(
                 array_merge(
                     [
                         'responses' => ['200' => array_merge(['description' => 'Success'], $content)]
@@ -93,16 +96,16 @@ class OpenApiGenerator
     private function getOrCreatePathItem(OpenApi $openapi, Endpoint $endpoint): PathItem
     {
         assert($openapi->paths instanceof Paths);
-        if ($openapi->paths->hasPath($endpoint->getPath())) {
-            $pathItem = $openapi->paths->getPath($endpoint->getPath());
+        if ($openapi->paths->hasPath($endpoint->path)) {
+            $pathItem = $openapi->paths->getPath($endpoint->path);
             assert($pathItem instanceof PathItem);
             return $pathItem;
         }
 
-        $openapi->paths->addPath($endpoint->getPath(), $pathItem = new PathItem([]));
+        $openapi->paths->addPath($endpoint->path, $pathItem = new PathItem([]));
 
         $matches = [];
-        preg_match_all('!{([^}]+)}!', $endpoint->getPath(), $matches);
+        preg_match_all('!{([^}]+)}!', $endpoint->path, $matches);
         foreach ($matches[1] as $match) {
             $pathParam = new Parameter(
                 [

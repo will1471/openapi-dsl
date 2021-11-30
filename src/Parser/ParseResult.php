@@ -16,12 +16,12 @@ final class ParseResult
     /**
      * @var HashMap<string, Obj>
      */
-    private HashMap $objs;
+    private readonly HashMap $objs;
 
     /**
      * @var HashMap<string, Enum>
      */
-    private HashMap $enums;
+    private readonly HashMap $enums;
 
     /**
      * @param Obj[] $objs
@@ -30,8 +30,8 @@ final class ParseResult
      */
     public function __construct(array $objs, array $enums, private array $endpoints = [])
     {
-        $this->objs = ArrayList::collect($objs)->toHashMap(fn($i) => [$i->getName(), $i]);
-        $this->enums = ArrayList::collect($enums)->toHashMap(fn($i) => [$i->getName(), $i]);
+        $this->objs = ArrayList::collect($objs)->toHashMap(fn(Obj $i) => [$i->name, $i]);
+        $this->enums = ArrayList::collect($enums)->toHashMap(fn(Enum $i) => [$i->name, $i]);
     }
 
     public function hasObj(string $name): bool

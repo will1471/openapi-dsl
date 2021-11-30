@@ -18,7 +18,7 @@ final class IfHelper
     private array $then = [];
     private ?Stmt\Else_ $else = null;
 
-    public function __construct(private Expr $if)
+    public function __construct(private readonly Expr $if)
     {
     }
 

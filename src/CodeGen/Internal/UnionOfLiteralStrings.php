@@ -16,7 +16,7 @@ final class UnionOfLiteralStrings
     public static function fromEnum(Enum $enum): Union
     {
         return new Union(
-            $enum->members()
+            $enum->members
                 ->keys()
                 ->map(fn(string $name): TLiteralString => new TLiteralString($name))
                 ->toArray()

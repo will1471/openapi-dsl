@@ -15,31 +15,35 @@ use Will1471\OpenApiDsl\DSL\Prop;
 final class Type
 {
 
-    private Atomic|Union $type;
+    private readonly Atomic | Union $type;
     private int $phpMajorVersion = 7;
     private int $phpMinorVersion = 4;
 
-    public function __construct(private Obj $obj, private Prop $prop, private string $namespace, private bool $optionalAsNull = true)
-    {
+    public function __construct(
+        private readonly Obj $obj,
+        private readonly Prop $prop,
+        private readonly string $namespace,
+        private readonly bool $optionalAsNull = true
+    ) {
         $this->type = $this->type($this->prop);
     }
 
     public function type(?Prop $prop = null): Atomic|Union
     {
         $prop = $prop ?? $this->prop;
-        if ($prop->getType() == 'string') {
+        if ($prop->type == 'string') {
             $type = new Atomic\TString();
         }
-        if ($prop->getType() == 'int' || $prop->getType() == 'integer') {
+        if ($prop->type == 'int' || $prop->type == 'integer') {
             $type = new Atomic\TInt();
         }
         if (!isset($type) || !$type instanceof Atomic) {
-            $type = new Atomic\TNamedObject('\\' . $this->namespace . '\\' . $prop->getType());
+            $type = new Atomic\TNamedObject('\\' . $this->namespace . '\\' . $prop->type);
         }
-        if ($prop->isList()) {
+        if ($prop->isList) {
             $type = new Atomic\TList(new Union([$type]));
         }
-        if ($prop->isNullable() || ($prop->isFieldOptional() && $this->optionalAsNull)) {
+        if ($prop->isNullable || ($prop->isOptional && $this->optionalAsNull)) {
             $type = new Union(
                 [
                     new Atomic\TNull(),

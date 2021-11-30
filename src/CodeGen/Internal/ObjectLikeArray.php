@@ -22,43 +22,43 @@ final class ObjectLikeArray
 {
 
     public function __construct(
-        private Obj $obj,
-        private string $namespace,
-        private ParseResult $pr,
-        private bool $nestedObjectToArray = true
+        private readonly Obj $obj,
+        private readonly string $namespace,
+        private readonly ParseResult $pr,
+        private readonly bool $nestedObjectToArray = true
     ) {
     }
 
     private function fqn(Obj|Enum $thing): string
     {
-        return '\\' . $this->namespace . '\\' . $thing->getName();
+        return '\\' . $this->namespace . '\\' . $thing->name;
     }
 
     private function propType(Prop $prop): Union
     {
-        $type = $prop->getType();
+        $type = $prop->type;
         if ($this->nestedObjectToArray) {
             $union = match (true) {
                 $this->pr->hasObj($type) => new Union([$this->objToKeyedArray($this->pr->getObj($type))]),
                 $this->pr->hasEnum($type) => UnionOfLiteralStrings::fromEnum($this->pr->getEnum($type)),
-                $prop->getType() == 'string' => new Union([new TString()]),
-                $prop->getType() == 'int', $prop->getType() == 'integer' => new Union([new TInt()]),
+                $prop->type == 'string' => new Union([new TString()]),
+                $prop->type == 'int', $prop->type == 'integer' => new Union([new TInt()]),
             };
         } else {
             $union = match (true) {
                 $this->pr->hasObj($type) => new Union([new TNamedObject($this->fqn($this->pr->getObj($type)))]),
                 $this->pr->hasEnum($type) => new Union([new TNamedObject($this->fqn($this->pr->getEnum($type)))]),
-                $prop->getType() == 'string' => new Union([new TString()]),
-                $prop->getType() == 'int', $prop->getType() == 'integer' => new Union([new TInt()]),
+                $prop->type == 'string' => new Union([new TString()]),
+                $prop->type == 'int', $prop->type == 'integer' => new Union([new TInt()]),
             };
         }
-        if ($prop->isList()) {
+        if ($prop->isList) {
             $union = new Union([new Atomic\TList($union)]);
         }
-        if ($prop->isNullable()) {
+        if ($prop->isNullable) {
             $union->addType(new Atomic\TNull());
         }
-        if ($prop->isFieldOptional()) {
+        if ($prop->isOptional) {
             $union->possibly_undefined = true;
         }
         return $union;
@@ -68,7 +68,7 @@ final class ObjectLikeArray
     {
         $types = [];
         foreach ($obj->props()->values() as $prop) {
-            $types[$prop->getName()] = $this->propType($prop);
+            $types[$prop->name] = $this->propType($prop);
         }
         assert(!empty($types));
         return new TKeyedArray($types);

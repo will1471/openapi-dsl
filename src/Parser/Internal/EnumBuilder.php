@@ -16,7 +16,7 @@ final class EnumBuilder
      */
     private array $members = [];
 
-    public function __construct(private string $name)
+    public function __construct(private readonly string $name)
     {
     }
 

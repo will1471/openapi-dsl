@@ -24,9 +24,9 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
 final class ObjGenerator
 {
     public function __construct(
-        private Obj $obj,
-        private ParseResult $parseResult,
-        private string $namespace = 'Will1471\\CodeGen',
+        private readonly Obj $obj,
+        private readonly ParseResult $parseResult,
+        private readonly string $namespace = 'Will1471\\CodeGen',
     ) {
     }
 
@@ -75,7 +75,7 @@ final class ObjGenerator
         $type = new Type($this->obj, $prop, $this->namespace);
 
         $property = new PropertyWithTypeGenerator(
-            $prop->getName(),
+            $prop->name,
             null,
             PropertyWithTypeGenerator::FLAG_PRIVATE
         );
@@ -98,10 +98,10 @@ final class ObjGenerator
     private function getterGenerator(Prop $prop): MethodGenerator
     {
         $method = new MethodGenerator(
-            'get' . ucfirst($prop->getName()),
+            'get' . ucfirst($prop->name),
             [],
             MethodGenerator::FLAG_PUBLIC,
-            'return $this->' . $prop->getName() . ';'
+            'return $this->' . $prop->name . ';'
         );
 
         $type = new Type($this->obj, $prop, $this->namespace);
@@ -136,13 +136,13 @@ final class ObjGenerator
 
         $haveExtra = false;
         foreach ($this->obj->props()->values() as $prop) {
-            if ($prop->isFieldOptional()) {
+            if ($prop->isOptional) {
                 $haveExtra = true;
                 continue;
             }
             $type = new Type($this->obj, $prop, $this->namespace);
 
-            $param = new ParameterGenerator($prop->getName(), $type->php());
+            $param = new ParameterGenerator($prop->name, $type->php());
             $params[] = $param;
 
             $docType = $type->docbloc();
@@ -182,20 +182,20 @@ final class ObjGenerator
 
     private function hasOptionalField(Prop $prop): MethodGenerator
     {
-        $generator = new MethodGenerator('has' . ucfirst($prop->getName()));
+        $generator = new MethodGenerator('has' . ucfirst($prop->name));
         $generator->setReturnType('bool');
-        $body = 'return array_key_exists(\'' . $prop->getName() . '\', $this->extra);';
+        $body = 'return array_key_exists(\'' . $prop->name . '\', $this->extra);';
         $generator->setBody($body);
         return $generator;
     }
 
     private function getOptionalField(Prop $prop): MethodGenerator
     {
-        $generator = new MethodGenerator('get' . ucfirst($prop->getName()));
+        $generator = new MethodGenerator('get' . ucfirst($prop->name));
         $type = new Type($this->obj, $prop, $this->namespace, false);
         $generator->setReturnType($type->php());
-        $body = 'if (array_key_exists(\'' . $prop->getName() . '\', $this->extra)) {' . "\n";
-        $body .= '    return $this->extra[\'' . $prop->getName() . '\'];' . "\n";
+        $body = 'if (array_key_exists(\'' . $prop->name . '\', $this->extra)) {' . "\n";
+        $body .= '    return $this->extra[\'' . $prop->name . '\'];' . "\n";
         $body .= "}\n";
         $body .= 'throw new \RunTimeException(\'Field not set\');' . "\n";
         $generator->setBody($body);

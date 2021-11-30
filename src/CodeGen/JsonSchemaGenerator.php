@@ -18,8 +18,10 @@ final class JsonSchemaGenerator
      */
     private array $definitions = [];
 
-    public function __construct(private ParseResult $parseResult, private string $refPrefix = '#/definitions/')
-    {
+    public function __construct(
+        private readonly ParseResult $parseResult,
+        private readonly string $refPrefix = '#/definitions/'
+    ) {
     }
 
     /**
@@ -63,7 +65,7 @@ final class JsonSchemaGenerator
     {
         return [
             'type' => 'string',
-            'enum' => $enum->members()
+            'enum' => $enum->members
                 ->keys()
                 ->toArray()
         ];
@@ -76,12 +78,12 @@ final class JsonSchemaGenerator
     {
         $properties = [];
         foreach ($obj->props()->values() as $prop) {
-            $properties[$prop->getName()] = $this->buildProp($prop);
+            $properties[$prop->name] = $this->buildProp($prop);
         }
 
         return [
             'type' => 'object',
-            'required' => $obj->props()->filter(fn(Entry $e) => !$e->value->isFieldOptional())->keys()->toArray(),
+            'required' => $obj->props()->filter(fn(Entry $e) => !$e->value->isOptional)->keys()->toArray(),
             'properties' => $properties
         ];
     }
@@ -91,17 +93,17 @@ final class JsonSchemaGenerator
      */
     public function buildProp(Prop $prop): array
     {
-        $type = ['type' => $prop->getType() == 'int' ? 'integer' : $prop->getType()];
-        if ($this->parseResult->hasObj($prop->getType()) || $this->parseResult->hasEnum($prop->getType())) {
-            if (!isset($this->definitions[$prop->getType()])) {
-                $this->definitions[$prop->getType()] = false;
+        $type = ['type' => $prop->type == 'int' ? 'integer' : $prop->type];
+        if ($this->parseResult->hasObj($prop->type) || $this->parseResult->hasEnum($prop->type)) {
+            if (!isset($this->definitions[$prop->type])) {
+                $this->definitions[$prop->type] = false;
             }
-            $type = ['$ref' => $this->refPrefix . $prop->getType()];
+            $type = ['$ref' => $this->refPrefix . $prop->type];
         }
-        if ($prop->isList()) {
+        if ($prop->isList) {
             $type = ['type' => 'array', 'items' => $type];
         }
-        if ($prop->isNullable()) {
+        if ($prop->isNullable) {
             $type = ['oneOf' => [['type' => 'null'], $type]];
         }
         return $type;

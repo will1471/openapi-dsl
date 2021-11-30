@@ -94,7 +94,6 @@ abstract class Helper
     }
 
     /**
-     * @param string $functionName
      * @return callable(Expr...):FuncCall
      */
     public static function function(string $functionName): callable
@@ -133,8 +132,6 @@ abstract class Helper
     }
 
     /**
-     * @param string $class
-     * @param string $method
      * @return callable(Expr...):StaticCall
      */
     public static function callStaticMethod(string $class, string $method): callable

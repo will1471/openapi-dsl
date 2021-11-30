@@ -29,12 +29,10 @@ final class PropertyWithTypeGenerator extends PropertyGenerator
             $docBlock->setIndentation('    ');
             $output .= $docBlock->generate();
         }
-
-        $output .= $this->indentation
+        return $output . ($this->indentation
             . $this->getVisibility()
             . ($this->isStatic() ? ' static' : '')
             . ($this->type ? ' ' . $this->type : '')
-            . ' $' . $this->getName() . ';';
-        return $output;
+            . ' $' . $this->getName() . ';');
     }
 }

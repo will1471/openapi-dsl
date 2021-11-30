@@ -30,18 +30,21 @@ use Will1471\OpenApiDsl\CodeGen\Internal\Helper as c;
 final class ObjFromArray
 {
 
-    public function __construct(private Obj $obj, private ParseResult $parseResult, private string $ns)
-    {
+    public function __construct(
+        private readonly Obj $obj,
+        private readonly ParseResult $parseResult,
+        private readonly string $ns
+    ) {
     }
 
     public function generate(): MethodGenerator
     {
-        $fqn = '\\' . $this->ns . '\\' . $this->obj->getName();
+        $fqn = '\\' . $this->ns . '\\' . $this->obj->name;
         $arrayType = (new ObjectLikeArray($this->obj, $this->ns, $this->parseResult))->toString();
         $tags = [
             new ParamTag('array', ['array']),
             new GenericTag('psalm-param', $arrayType . ' $array'),
-            new ReturnTag([$this->obj->getName()])
+            new ReturnTag([$this->obj->name])
         ];
         $method = new MethodGenerator(
             'fromArray',
@@ -65,10 +68,10 @@ final class ObjFromArray
         if ($extra) {
             $stmts[] = c::assign($extra, c::empty_array());
             foreach ($opt as $prop) {
-                $assignDest = c::array_dim($extra, $prop->getName());
+                $assignDest = c::array_dim($extra, $prop->name);
                 $assignValue = $this->extractExpr($prop, $inputArray);
 
-                $stmts[] = c::if_(c::array_key_exists($prop->getName(), $inputArray))
+                $stmts[] = c::if_(c::array_key_exists($prop->name, $inputArray))
                     ->then(c::assign($assignDest, $assignValue))
                     ->build();
             }
@@ -82,23 +85,23 @@ final class ObjFromArray
             $args[] = new Arg($extra);
         }
 
-        $stmts[] = c::return_(new New_(new Name($this->obj->getName()), $args));
+        $stmts[] = c::return_(new New_(new Name($this->obj->name), $args));
 
         return c::to_string($stmts);
     }
 
     private function extractExpr(Prop $prop, Variable $inputArray): Expr
     {
-        $name = $prop->getName();
-        $type = $prop->getType();
-        $isObj = $this->parseResult->hasObj($prop->getType());
-        $isEnum = $this->parseResult->hasEnum($prop->getType());
+        $name = $prop->name;
+        $type = $prop->type;
+        $isObj = $this->parseResult->hasObj($prop->type);
+        $isEnum = $this->parseResult->hasEnum($prop->type);
 
         $expr = c::array_dim($inputArray, $name);
 
         if ($isObj || $isEnum) {
             $method = $isObj ? 'fromArray' : 'fromString';
-            if ($prop->isList()) {
+            if ($prop->isList) {
                 $callable = new Array_(
                     [
                         new ArrayItem(new Expr\ClassConstFetch(new Name($type), new Identifier('class'))),
@@ -110,7 +113,7 @@ final class ObjFromArray
                 $expr = c::callStaticMethod($type, $method)($expr);
             }
         }
-        if ($prop->isNullable()) {
+        if ($prop->isNullable) {
             $expr = new Expr\Ternary(
                 c::isset_(c::array_dim(c::var_('array'), $name)),
                 $expr,

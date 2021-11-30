@@ -23,18 +23,18 @@ final class EnumGenerator
 
     private string $fqn;
 
-    public function __construct(private Enum $enum, private string $namespace)
+    public function __construct(private readonly Enum $enum, private readonly string $namespace)
     {
-        $this->fqn = '\\' . $this->namespace . '\\' . $this->enum->getName();
+        $this->fqn = '\\' . $this->namespace . '\\' . $this->enum->name;
     }
 
     public function generate(): string
     {
         $stringUnionType = UnionOfLiteralStrings::fromEnum($this->enum)
-            ->toNamespacedString($this->namespace, [], $this->enum->getName(), false);
+            ->toNamespacedString($this->namespace, [], $this->enum->name, false);
 
         $class = new ClassGenerator(
-            $this->enum->getName(),
+            $this->enum->name,
             $this->namespace,
             ClassGenerator::FLAG_FINAL,
             null,
@@ -68,13 +68,13 @@ final class EnumGenerator
      */
     private function instanceMethods(): array
     {
-        return $this->enum->members()->values()->map(
+        return $this->enum->members->values()->map(
             function (EnumMember $member): MethodGenerator {
                 $m = new MethodGenerator(
-                    $member->getName(),
+                    $member->name,
                     [],
                     MethodGenerator::FLAG_PUBLIC | MethodGenerator::FLAG_STATIC,
-                    'return new self(\'' . $member->getName() . '\');'
+                    'return new self(\'' . $member->name . '\');'
                 );
                 $m->setReturnType($this->fqn);
                 return $m;
@@ -133,7 +133,7 @@ final class EnumGenerator
     private function checkString(string $stringUnionType): MethodGenerator
     {
         $strings = new Array_(
-            $this->enum->members()
+            $this->enum->members
                 ->keys()
                 ->map(fn(string $s) => new String_($s))
                 ->map(fn(String_ $s) => new ArrayItem($s))
