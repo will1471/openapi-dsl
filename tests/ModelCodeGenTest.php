@@ -10,11 +10,18 @@ use Will1471\CodeGen\SomeObj;
 use Will1471\OpenApiDsl\CodeGen\EnumGenerator;
 use Will1471\OpenApiDsl\CodeGen\JsonSchemaGenerator;
 use Will1471\OpenApiDsl\CodeGen\ObjGenerator;
+use Will1471\OpenApiDsl\DSL\Enum;
+use Will1471\OpenApiDsl\DSL\Obj;
 use Will1471\OpenApiDsl\Parser\Parser;
+use Will1471\OpenApiDsl\Parser\ParseResult;
+
+use function Fp\Callable\compose;
+use function Fp\Callable\partialRight;
+use function Pipeline\zip;
 
 class ModelCodeGenTest extends TestCase
 {
-    private function parse(string $content)
+    private function parse(string $content): ParseResult
     {
         $parser = new Parser();
         return $parser->parse($content);
@@ -126,28 +133,26 @@ Beans
 - id: int
 DATA;
 
-
         $parseResult = $this->parse($data);
+        $namespace = 'Will1471\\CodeGen';
 
-        foreach ($parseResult->objs()->values() as $obj) {
-            $name = $obj->name;
-            $src = (new ObjGenerator($obj, $parseResult, 'Will1471\\CodeGen'))->generate();
-            file_put_contents(__DIR__ . '/../output/' . $name . '.php', '<?php' . "\n\n" . $src);
+        $getName = fn(Enum|Obj $t): string => $t->name;
+        $filename = fn(string $name, string $ext): string => __DIR__ . "/../output/{$name}.{$ext}";
+        $phpPath = compose($getName, partialRight($filename, 'php'));
+        $jsonPath = compose($getName, partialRight($filename, 'json'));
 
-            file_put_contents(
-                __DIR__ . '/../output/' . $name . '.json',
-                json_encode(
-                    (new JsonSchemaGenerator($parseResult))->build($obj),
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-                )
-            );
-        }
+        $buildEnum = fn(Enum $enum): string => "<?php\n\n" . (new EnumGenerator($enum, $namespace))->generate();
+        $buildObj = fn(Obj $obj): string => "<?php\n\n" . (new ObjGenerator($obj, $parseResult, $namespace))->generate();
+        $buildJson = fn(Obj $obj): string => json_encode((new JsonSchemaGenerator($parseResult))->build($obj));
 
-        foreach ($parseResult->enums()->values() as $enum) {
-            $name = $enum->name;
-            $src = (new EnumGenerator($enum, 'Will1471\\CodeGen'))->generate();
-            file_put_contents(__DIR__ . '/../output/' . $name . '.php', '<?php' . "\n\n" . $src);
-        }
+        $writeFile = /** @param array{string,string} $pair */ fn(array $pair): int|false => file_put_contents($pair[0], $pair[1]);
+
+        $enums = $parseResult->enums->values();
+        $objs = $parseResult->objs->values();
+
+        zip($enums->map($phpPath), $enums->map($buildEnum))->map($writeFile);
+        zip($objs->map($phpPath), $objs->map($buildObj))->map($writeFile);
+        zip($objs->map($jsonPath), $objs->map($buildJson))->map($writeFile);
 
         $this->assertTrue(true);
     }

@@ -16,19 +16,19 @@ final class ParseResult
     /**
      * @var HashMap<string, Obj>
      */
-    private readonly HashMap $objs;
+    public readonly HashMap $objs;
 
     /**
      * @var HashMap<string, Enum>
      */
-    private readonly HashMap $enums;
+    public readonly HashMap $enums;
 
     /**
      * @param Obj[] $objs
      * @param Enum[] $enums
-     * @param Endpoint[] $endpoints
+     * @param list<Endpoint> $endpoints
      */
-    public function __construct(array $objs, array $enums, private array $endpoints = [])
+    public function __construct(array $objs, array $enums, public readonly array $endpoints = [])
     {
         $this->objs = ArrayList::collect($objs)->toHashMap(fn(Obj $i) => [$i->name, $i]);
         $this->enums = ArrayList::collect($enums)->toHashMap(fn(Enum $i) => [$i->name, $i]);
@@ -52,29 +52,5 @@ final class ParseResult
     public function getEnum(string $name): Enum
     {
         return $this->enums->get($name)->getOrCall(fn() => throw new \Exception('enum not found'));
-    }
-
-    /**
-     * @return Endpoint[]
-     */
-    public function getEndpoints(): array
-    {
-        return $this->endpoints;
-    }
-
-    /**
-     * @return HashMap<string, Obj>
-     */
-    public function objs(): HashMap
-    {
-        return $this->objs;
-    }
-
-    /**
-     * @return HashMap<string,Enum>
-     */
-    public function enums(): HashMap
-    {
-        return $this->enums;
     }
 }

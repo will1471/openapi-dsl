@@ -44,7 +44,7 @@ class OpenApiGenerator
             ]
         );
 
-        foreach ($this->parseResult->getEndpoints() as $endpoint) {
+        foreach ($this->parseResult->endpoints as $endpoint) {
             assert($openapi->paths instanceof Paths);
 
             $pathItem = $this->getOrCreatePathItem($openapi, $endpoint);

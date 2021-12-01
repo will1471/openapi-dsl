@@ -48,12 +48,6 @@ class ObjectLikeArrayTest extends TestCase
         $bar = new Obj('Bar');
         $bar->addProp(new Prop('id', 'int'));
 
-        $type = function (Obj $obj, Obj ...$objs): string {
-            $result = new ParseResult($objs, [], []);
-            $namespace = 'Will1471\\CodeGen';
-            return (new ObjectLikeArray($obj, $namespace, $result))->toString();
-        };
-
         $this->assertSame(
             'array{id: int}',
             (new ObjectLikeArray($bar, 'Will1471\\CodeGen', new ParseResult([$foo, $bar], [], [])))->toString()

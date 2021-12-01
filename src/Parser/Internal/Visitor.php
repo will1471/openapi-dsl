@@ -19,17 +19,17 @@ final class Visitor extends \Phplrt\Visitor\Visitor
 {
 
     /**
-     * @var Obj[]
+     * @var list<Obj>
      */
     public array $objs = [];
 
     /**
-     * @var Enum[]
+     * @var list<Enum>
      */
     public array $enums = [];
 
     /**
-     * @var Endpoint[]
+     * @var list<Endpoint>
      */
     public array $endpoints = [];
 

@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Will1471\OpenApiDsl\CodeGen\OpenApiGenerator;
 use Will1471\OpenApiDsl\Parser\Parser;
 
+/**
+ * @psalm-suppress MixedPropertyFetch
+ */
 class OpenApiGeneratorTest extends TestCase
 {
 
@@ -27,9 +30,12 @@ DATA;
         $result = (new Parser())->parse($data);
 
         $openApi = (new OpenApiGenerator('Title', '0.0.1', $result))->generate();
+        /** @var mixed $data */
+        $data = $openApi->getSerializableData();
+        $this->assertInstanceOf(\stdClass::class, $data);
         file_put_contents(
             __DIR__ . '/../output/openapi.json',
-            $json = json_encode($data = $openApi->getSerializableData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
         $this->assertSame('Title', $data->info->title);
         $this->assertSame('0.0.1', $data->info->version);
@@ -112,9 +118,12 @@ DATA;
         $result = (new Parser())->parse($data);
 
         $openApi = (new OpenApiGenerator('PathParamsAndMultiMethod', '0.0.2', $result))->generate();
+        /** @var mixed $data */
+        $data = $openApi->getSerializableData();
+        $this->assertInstanceOf(\stdClass::class, $data);
         file_put_contents(
             __DIR__ . '/../output/openapi-path-params-and-multi-method.json',
-            $json = json_encode($data = $openApi->getSerializableData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
         $this->assertSame('PathParamsAndMultiMethod', $data->info->title);
         $this->assertSame('0.0.2', $data->info->version);
@@ -211,9 +220,12 @@ DATA;
         $result = (new Parser())->parse($data);
 
         $openApi = (new OpenApiGenerator('Title', '0.0.1', $result))->generate();
+        /** @var mixed $data */
+        $data = $openApi->getSerializableData();
+        $this->assertInstanceOf(\stdClass::class, $data);
         file_put_contents(
             __DIR__ . '/../output/openapi-create-message.json',
-            $json = json_encode($data = $openApi->getSerializableData(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+            $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
         $this->assertSame('Title', $data->info->title);
         $this->assertSame('0.0.1', $data->info->version);

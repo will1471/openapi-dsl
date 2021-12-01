@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Will1471\OpenApiDsl;
 
 use Will1471\OpenApiDsl\Parser\Parser;
+use Will1471\OpenApiDsl\Parser\ParseResult;
 
 class ParserTest extends \PHPUnit\Framework\TestCase
 {
@@ -12,7 +13,7 @@ class ParserTest extends \PHPUnit\Framework\TestCase
     {
     }
 
-    private function parse(string $content)
+    private function parse(string $content): ParseResult
     {
         $parser = new Parser();
         return $parser->parse($content);
@@ -177,8 +178,8 @@ DATA;
 GET /foo
 DATA;
         $r = $this->parse($data);
-        $this->assertCount(1, $r->getEndpoints());
-        $endpoint = $r->getEndpoints()[0];
+        $this->assertCount(1, $r->endpoints);
+        $endpoint = $r->endpoints[0];
         $this->assertSame('GET', $endpoint->method);
         $this->assertSame('/foo', $endpoint->path);
 
@@ -186,8 +187,8 @@ DATA;
 DELETE /bar/baz?id={foo}
 DATA;
         $r = $this->parse($data);
-        $this->assertCount(1, $r->getEndpoints());
-        $endpoint = $r->getEndpoints()[0];
+        $this->assertCount(1, $r->endpoints);
+        $endpoint = $r->endpoints[0];
         $this->assertSame('DELETE', $endpoint->method);
         $this->assertSame('/bar/baz', $endpoint->path);
 
@@ -195,8 +196,8 @@ DATA;
 GET /foo/{id}/bar
 DATA;
         $r = $this->parse($data);
-        $this->assertCount(1, $r->getEndpoints());
-        $endpoint = $r->getEndpoints()[0];
+        $this->assertCount(1, $r->endpoints);
+        $endpoint = $r->endpoints[0];
         $this->assertSame('GET', $endpoint->method);
         $this->assertSame('/foo/{id}/bar', $endpoint->path);
         $this->assertNull($endpoint->inputType);
@@ -210,8 +211,8 @@ DATA;
 GET /foo <= SomeObj
 DATA
         );
-        $this->assertCount(1, $r->getEndpoints());
-        $endpoint = $r->getEndpoints()[0];
+        $this->assertCount(1, $r->endpoints);
+        $endpoint = $r->endpoints[0];
         $this->assertSame('SomeObj', $endpoint->inputType);
         $this->assertNull($endpoint->outputType);
     }
@@ -223,8 +224,8 @@ DATA
 GET /foo => SomeObj
 DATA
         );
-        $this->assertCount(1, $r->getEndpoints());
-        $endpoint = $r->getEndpoints()[0];
+        $this->assertCount(1, $r->endpoints);
+        $endpoint = $r->endpoints[0];
         $this->assertNull($endpoint->inputType);
         $this->assertSame('SomeObj', $endpoint->outputType);
     }
@@ -236,8 +237,8 @@ DATA
 GET /foo <= InType => OutType
 DATA
         );
-        $this->assertCount(1, $r->getEndpoints());
-        $endpoint = $r->getEndpoints()[0];
+        $this->assertCount(1, $r->endpoints);
+        $endpoint = $r->endpoints[0];
         $this->assertSame('InType', $endpoint->inputType);
         $this->assertSame('OutType', $endpoint->outputType);
     }
@@ -251,7 +252,7 @@ Obj
 - id: int
 DATA
         );
-        $this->assertCount(1, $r->objs());
+        $this->assertCount(1, $r->objs);
         $r = $this->parse(
             <<<DATA
 # comment
@@ -259,7 +260,7 @@ DATA
 #- id: int
 DATA
         );
-        $this->assertCount(0, $r->objs());
+        $this->assertCount(0, $r->objs);
     }
 
     public function testParseQueryParams(): void
@@ -269,20 +270,20 @@ DATA
 GET /search?q={q}
 DATA
         );
-        $this->assertCount(1, $r->getEndpoints());
+        $this->assertCount(1, $r->endpoints);
 
         $r = $this->parse(
             <<<DATA
 GET /search?q={q}&order={order}
 DATA
         );
-        $this->assertCount(1, $r->getEndpoints());
+        $this->assertCount(1, $r->endpoints);
 
         $r = $this->parse(
             <<<DATA
 GET /foo?ids[]={ids}
 DATA
         );
-        $this->assertCount(1, $r->getEndpoints());
+        $this->assertCount(1, $r->endpoints);
     }
 }
