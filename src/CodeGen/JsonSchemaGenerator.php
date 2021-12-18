@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Will1471\OpenApiDsl\CodeGen;
 
 use Fp\Collections\Entry;
+use Will1471\OpenApiDsl\CodeGen\Internal\Scheduler;
 use Will1471\OpenApiDsl\DSL\Enum;
 use Will1471\OpenApiDsl\DSL\Obj;
 use Will1471\OpenApiDsl\DSL\Prop;
@@ -12,16 +13,13 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
 
 final class JsonSchemaGenerator
 {
-
-    /**
-     * @var array<string,bool>
-     */
-    private array $definitions = [];
+    private Scheduler $definitions;
 
     public function __construct(
         private readonly ParseResult $parseResult,
         private readonly string $refPrefix = '#/definitions/'
     ) {
+        $this->definitions = new Scheduler();
     }
 
     /**
@@ -39,7 +37,7 @@ final class JsonSchemaGenerator
     public function build(Obj $obj): array
     {
         $doc = $this->buildObj($obj);
-        while (($def = $this->defToBuild()) !== null) {
+        foreach ($this->definitions() as $def) {
             $doc['definitions'][$def] = $this->parseResult->hasEnum($def)
                 ? $this->buildEnum($this->parseResult->getEnum($def))
                 : $this->buildObj($this->parseResult->getObj($def));
@@ -47,15 +45,14 @@ final class JsonSchemaGenerator
         return $doc;
     }
 
-    public function defToBuild(): ?string
+    /**
+     * @return iterable<string>
+     */
+    public function definitions(): iterable
     {
-        foreach ($this->definitions as $name => $done) {
-            if ($done === false) {
-                $this->definitions[$name] = true;
-                return $name;
-            }
+        while ($def = $this->definitions->pop()) {
+            yield $def;
         }
-        return null;
     }
 
     /**
@@ -95,9 +92,7 @@ final class JsonSchemaGenerator
     {
         $type = ['type' => $prop->type == 'int' ? 'integer' : $prop->type];
         if ($this->parseResult->hasObj($prop->type) || $this->parseResult->hasEnum($prop->type)) {
-            if (!isset($this->definitions[$prop->type])) {
-                $this->definitions[$prop->type] = false;
-            }
+            $this->definitions->push($prop->type);
             $type = ['$ref' => $this->refPrefix . $prop->type];
         }
         if ($prop->isList) {

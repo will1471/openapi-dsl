@@ -78,7 +78,7 @@ class OpenApiGenerator
             );
         }
 
-        while (($def = $this->schemaGenerator->defToBuild()) != null) {
+        foreach ($this->schemaGenerator->definitions() as $def) {
             assert($openapi->components instanceof Components);
             $openapi->components->schemas = array_merge($openapi->components->schemas, [
                 $def => new Schema(
