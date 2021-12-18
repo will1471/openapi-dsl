@@ -88,13 +88,6 @@ final class ObjFromUntypedArray
                 ->build();
         }
 
-        // @todo can remove?
-        if (!$prop->isNullable) {
-            $stmts[] = c::if_(c::not_(c::isset_(c::array_dim($inputArray, $prop->name))))
-                ->then(c::throwException('Property "' . $prop->name . '" is not nullable, but found null.'))
-                ->build();
-        }
-
         if ($prop->isList == false) {
             $stmts[] = $this->assertInputArrayType($inputArray, $prop);
             $stmts[] = $this->assignProp($inputArray, $prop, $outputArray);

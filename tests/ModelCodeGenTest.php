@@ -143,16 +143,17 @@ DATA;
 
         $buildEnum = fn(Enum $enum): string => "<?php\n\n" . (new EnumGenerator($enum, $namespace))->generate();
         $buildObj = fn(Obj $obj): string => "<?php\n\n" . (new ObjGenerator($obj, $parseResult, $namespace))->generate();
-        $buildJson = fn(Obj $obj): string => json_encode((new JsonSchemaGenerator($parseResult))->build($obj));
+        $jsonOpt = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
+        $buildJson = fn(Obj $obj): string => json_encode((new JsonSchemaGenerator($parseResult))->build($obj), $jsonOpt);
 
         $writeFile = /** @param array{string,string} $pair */ fn(array $pair): int|false => file_put_contents($pair[0], $pair[1]);
 
         $enums = $parseResult->enums->values();
         $objs = $parseResult->objs->values();
 
-        zip($enums->map($phpPath), $enums->map($buildEnum))->map($writeFile);
-        zip($objs->map($phpPath), $objs->map($buildObj))->map($writeFile);
-        zip($objs->map($jsonPath), $objs->map($buildJson))->map($writeFile);
+        zip($enums->map($phpPath)->toArray(), $enums->map($buildEnum)->toArray())->map($writeFile)->toArray();
+        zip($objs->map($phpPath)->toArray(), $objs->map($buildObj)->toArray())->map($writeFile)->toArray();
+        zip($objs->map($jsonPath)->toArray(), $objs->map($buildJson)->toArray())->map($writeFile)->toArray();
 
         $this->assertTrue(true);
     }

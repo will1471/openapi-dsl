@@ -35,9 +35,6 @@ final class SomeObj
         if (!array_key_exists('id', $array)) {
             throw new \Exception('Property "id" is required, but missing.');
         }
-        if (!isset($array['id'])) {
-            throw new \Exception('Property "id" is not nullable, but found null.');
-        }
         if (!is_int($array['id'])) {
             throw new \Exception('Property id should be int, but found' . get_debug_type($array['id']));
         }

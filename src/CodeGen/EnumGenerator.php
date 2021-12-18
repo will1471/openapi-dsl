@@ -20,7 +20,6 @@ use Will1471\OpenApiDsl\DSL\EnumMember;
 
 final class EnumGenerator
 {
-
     private string $fqn;
 
     public function __construct(private readonly Enum $enum, private readonly string $namespace)
