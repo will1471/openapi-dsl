@@ -26,7 +26,8 @@
     "roave/infection-static-analysis-plugin": "*",
     "phpmd/phpmd": "*",
     "sebastian/phpcpd": "*",
-    "matthiasnoback/php-parser-instantiation-printer": "*"
+    "matthiasnoback/php-parser-instantiation-printer": "*",
+    "psalm/plugin-phpunit": "^0.16.1"
   },
   "scripts": {
     "phpcs": "php8.1 -d grpc.enable_fork_support=1 -d grpc.poll_strategy=epoll1 ./vendor/bin/phpcs -s --parallel=$(nproc --all) --standard=phpcs.xml ./src/ ./tests/",
