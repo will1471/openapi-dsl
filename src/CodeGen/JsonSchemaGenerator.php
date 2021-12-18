@@ -24,6 +24,37 @@ final class JsonSchemaGenerator
 
     /**
      * @return array{
+     *   '$ref':string,
+     *   definitions:array<
+     *     string,
+     *     array{type:'object',required:list<string>,properties:array<string,array>}
+     *     |array{type:'string',enum:list<string>}
+     *   >
+     * }
+     */
+    public function buildRecursiveObj(Obj $obj): array
+    {
+        $this->definitions->push($obj->name);
+        $this->definitions->pop();
+
+        $doc = [
+            '$ref' => $this->refPrefix . $obj->name,
+            'definitions' => [
+                $obj->name => $this->buildObj($obj)
+            ]
+        ];
+
+        foreach ($this->definitions() as $def) {
+            $doc['definitions'][$def] = $this->parseResult->hasEnum($def)
+                ? $this->buildEnum($this->parseResult->getEnum($def))
+                : $this->buildObj($this->parseResult->getObj($def));
+        }
+
+        return $doc;
+    }
+
+    /**
+     * @return array{
      *   type:'object',
      *   required:list<string>,
      *   properties:array<string,array>,
@@ -62,9 +93,7 @@ final class JsonSchemaGenerator
     {
         return [
             'type' => 'string',
-            'enum' => $enum->members
-                ->keys()
-                ->toArray()
+            'enum' => $enum->members->keys()->toArray()
         ];
     }
 
