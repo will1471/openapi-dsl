@@ -12,7 +12,6 @@ use Laminas\Code\Generator\PropertyGenerator;
  */
 final class PropertyWithTypeGenerator extends PropertyGenerator
 {
-
     private ?string $type = null;
 
     public function setType(string $type): self

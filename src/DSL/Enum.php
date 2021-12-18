@@ -10,7 +10,6 @@ use Will1471\OpenApiDsl\ReservedWord;
 
 final class Enum
 {
-
     /**
      * @var NonEmptyHashMap<string,EnumMember>
      */

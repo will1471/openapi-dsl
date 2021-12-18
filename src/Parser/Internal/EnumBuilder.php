@@ -10,7 +10,6 @@ use Will1471\OpenApiDsl\DSL\EnumMember;
 
 final class EnumBuilder
 {
-
     /**
      * @var list<EnumMember>
      */

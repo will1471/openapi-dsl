@@ -17,7 +17,6 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
 
 class OpenApiGenerator
 {
-
     private JsonSchemaGenerator $schemaGenerator;
 
     public function __construct(

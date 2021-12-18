@@ -15,7 +15,6 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
 
 class JsonSchemaTest extends TestCase
 {
-
     public function testObjectWithOptionalField(): void
     {
         $obj = new Obj('Foo');

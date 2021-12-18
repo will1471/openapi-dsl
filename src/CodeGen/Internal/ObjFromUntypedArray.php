@@ -25,7 +25,6 @@ use Will1471\OpenApiDsl\CodeGen\Internal\Helper as c;
  */
 final class ObjFromUntypedArray
 {
-
     public function __construct(
         private readonly Obj $obj,
         private readonly ParseResult $parseResult,
@@ -75,7 +74,7 @@ final class ObjFromUntypedArray
     }
 
     /**
-     * @return Node[]
+     * @return list<Node>
      */
     private function propertyStatements(Variable $inputArray, Prop $prop, Variable $outputArray): array
     {

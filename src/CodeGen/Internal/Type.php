@@ -14,7 +14,6 @@ use Will1471\OpenApiDsl\DSL\Prop;
  */
 final class Type
 {
-
     private readonly Atomic | Union $type;
     private int $phpMajorVersion = 7;
     private int $phpMinorVersion = 4;

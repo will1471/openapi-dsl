@@ -9,7 +9,6 @@ use Will1471\OpenApiDsl\DSL\Obj;
 
 class ObjTest extends TestCase
 {
-
     public function testMissingPropThrows(): void
     {
         $obj = new Obj('name');

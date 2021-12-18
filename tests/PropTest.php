@@ -9,7 +9,6 @@ use Will1471\OpenApiDsl\DSL\Prop;
 
 class PropTest extends TestCase
 {
-
     public function testGetters(): void
     {
         $prop = new Prop('name', 'type');

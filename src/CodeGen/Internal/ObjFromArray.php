@@ -29,7 +29,6 @@ use Will1471\OpenApiDsl\CodeGen\Internal\Helper as c;
  */
 final class ObjFromArray
 {
-
     public function __construct(
         private readonly Obj $obj,
         private readonly ParseResult $parseResult,

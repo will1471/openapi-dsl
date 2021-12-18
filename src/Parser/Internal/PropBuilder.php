@@ -11,7 +11,6 @@ use Will1471\OpenApiDsl\DSL\Prop;
  */
 final class PropBuilder
 {
-
     private ?string $name = null;
     private ?string $type = null;
     private bool $optional = false;

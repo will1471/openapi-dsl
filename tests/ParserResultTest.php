@@ -9,7 +9,6 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
 
 class ParserResultTest extends TestCase
 {
-
     public function testObjNotFoundThrows(): void
     {
         $r = new ParseResult([], []);

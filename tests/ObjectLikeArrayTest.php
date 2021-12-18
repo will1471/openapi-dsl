@@ -15,7 +15,6 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
 
 class ObjectLikeArrayTest extends TestCase
 {
-
     public function testSimple(): void
     {
         $type = function (Obj $obj): string {

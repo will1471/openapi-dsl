@@ -20,7 +20,6 @@ use Will1471\OpenApiDsl\Parser\ParseResult;
  */
 final class ObjectLikeArray
 {
-
     public function __construct(
         private readonly Obj $obj,
         private readonly string $namespace,

@@ -8,7 +8,6 @@ use Will1471\OpenApiDsl\ReservedWord;
 
 final class Prop
 {
-
     public function __construct(
         public readonly string $name,
         public readonly string $type,

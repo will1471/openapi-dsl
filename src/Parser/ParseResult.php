@@ -12,7 +12,6 @@ use Will1471\OpenApiDsl\DSL\Obj;
 
 final class ParseResult
 {
-
     /**
      * @var HashMap<string, Obj>
      */
@@ -24,8 +23,8 @@ final class ParseResult
     public readonly HashMap $enums;
 
     /**
-     * @param Obj[] $objs
-     * @param Enum[] $enums
+     * @param list<Obj> $objs
+     * @param list<Enum> $enums
      * @param list<Endpoint> $endpoints
      */
     public function __construct(array $objs, array $enums, public readonly array $endpoints = [])

@@ -17,7 +17,6 @@ use Will1471\OpenApiDsl\DSL\Obj;
  */
 final class Visitor extends \Phplrt\Visitor\Visitor
 {
-
     /**
      * @var list<Obj>
      */

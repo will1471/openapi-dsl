@@ -9,7 +9,6 @@ use Will1471\OpenApiDsl\ReservedWord;
 
 final class Obj
 {
-
     /**
      * @var array<string,Prop>
      */

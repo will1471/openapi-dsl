@@ -13,7 +13,6 @@ use Will1471\OpenApiDsl\Parser\Parser;
  */
 class OpenApiGeneratorTest extends TestCase
 {
-
     public function testSimpleApi(): void
     {
         $data = <<<DATA
